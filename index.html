@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power Sales — Cobertura ADR</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--jd-green:#367C2B;--jd-yellow:#FFDE00;--bg:#080d08;--sur:#101810;--sur2:#162116;--sur3:#1c2a1c;--txt:#e4ede4;--mut:#607860;--ok:#4ade80;--warn:#facc15;--alert:#f87171;--blue:#60a5fa;--brd:#1a281a;--brd2:#223022;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:210px;background:var(--sur);border-right:1px solid var(--brd);display:flex;flex-direction:column;z-index:100;}
+.logo{padding:1.2rem 1rem .8rem;border-bottom:1px solid var(--brd);}
+.logo-box{width:40px;height:40px;background:var(--jd-yellow);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:#000;margin-bottom:.6rem;}
+.logo h1{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:3px;color:var(--jd-yellow);}
+.logo p{font-size:.6rem;color:var(--mut);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.nav{flex:1;padding:.6rem 0;overflow-y:auto;}
+.nav-sec{font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--mut);padding:.8rem 1rem .3rem;opacity:.6;}
+.ni{display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;font-size:.8rem;cursor:pointer;color:var(--mut);transition:all .15s;border-left:3px solid transparent;}
+.ni:hover{color:var(--txt);background:var(--sur2);}
+.ni.active{color:var(--jd-yellow);background:var(--sur3);border-left-color:var(--jd-yellow);}
+.ni-ic{font-size:.9rem;width:18px;text-align:center;}
+.sfoot{padding:.8rem 1rem;border-top:1px solid var(--brd);}
+.sfoot p{font-size:.6rem;color:var(--mut);}
+.main{margin-left:210px;min-height:100vh;}
+.topbar{background:var(--sur);border-bottom:1px solid var(--brd);padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;}
+.topbar-right{display:flex;align-items:center;gap:.8rem;}
+.dlc{background:var(--jd-green);color:var(--jd-yellow);font-family:'Bebas Neue',sans-serif;letter-spacing:1.5px;font-size:.7rem;padding:3px 10px;border-radius:4px;}
+.mc{font-size:.68rem;padding:3px 9px;border-radius:4px;border:1px solid var(--brd2);color:var(--mut);}
+.mc span{color:var(--warn);font-weight:600;}
+.fbar{background:var(--sur2);border-bottom:1px solid var(--brd);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+.fl{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--mut);}
+.fb{padding:3px 10px;border-radius:20px;border:1px solid var(--brd2);background:transparent;color:var(--mut);font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.fb:hover{border-color:var(--jd-green);color:var(--txt);}
+.fb.active{background:var(--jd-green);color:var(--jd-yellow);border-color:var(--jd-green);font-weight:600;}
+.fdiv{width:1px;height:16px;background:var(--brd2);}
+.page{display:none;padding:1.5rem;}
+.page.active{display:block;animation:fi .25s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.kg{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.5rem;}
+.kg5{display:grid;grid-template-columns:repeat(5,1fr);gap:.9rem;margin-bottom:1.5rem;}
+.kc{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:1rem 1.2rem;position:relative;overflow:hidden;transition:transform .15s;}
+.kc:hover{transform:translateY(-2px);}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kc.g::before{background:var(--ok);}
+.kc.y::before{background:var(--warn);}
+.kc.b::before{background:var(--blue);}
+.kc.r::before{background:var(--alert);}
+.kc.jd::before{background:var(--jd-yellow);}
+.kl{font-size:.63rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);margin-bottom:.3rem;}
+.kv{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1px;line-height:1;}
+.kc.g .kv{color:var(--ok);}.kc.y .kv{color:var(--warn);}.kc.b .kv{color:var(--blue);}.kc.r .kv{color:var(--alert);}.kc.jd .kv{color:var(--jd-yellow);}
+.ks{font-size:.66rem;color:var(--mut);margin-top:3px;}
+.st{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:3px;color:var(--mut);text-transform:uppercase;margin-bottom:.8rem;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+.card{background:var(--sur);border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:1.2rem;}
+.card:last-child{margin-bottom:0;}
+.ch{padding:.8rem 1.1rem;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;}
+.ch h3{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:1.5px;}
+.cb{padding:1.1rem;}
+.br{display:flex;align-items:center;gap:.7rem;margin-bottom:.6rem;}
+.bn{font-size:.76rem;color:var(--txt);width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bw{flex:1;background:var(--brd);border-radius:99px;height:7px;overflow:hidden;}
+.bf{height:100%;border-radius:99px;transition:width .5s ease;}
+.bp{font-size:.72rem;font-weight:600;width:36px;text-align:right;flex-shrink:0;}
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{padding:.5rem .85rem;font-size:.63rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);text-align:left;background:var(--sur2);font-weight:500;}
+.tbl td{padding:.55rem .85rem;font-size:.78rem;border-bottom:1px solid var(--brd);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--sur2);}
+.tbl .tot td{background:var(--sur2);font-weight:600;border-top:1px solid var(--jd-green);}
+.tag{font-size:.64rem;padding:2px 7px;border-radius:4px;font-weight:600;letter-spacing:.5px;display:inline-block;}
+.t-ok{background:rgba(74,222,128,.12);color:var(--ok);}
+.t-part{background:rgba(250,204,21,.12);color:var(--warn);}
+.t-pend{background:rgba(248,113,113,.12);color:var(--alert);}
+.t-cons{background:rgba(96,165,250,.12);color:var(--blue);}
+.ring-wrap{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:.8rem;}
+.ring-info{display:flex;flex-direction:column;gap:.5rem;}
+.leg-item{display:flex;align-items:center;gap:.5rem;font-size:.75rem;}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.plist{display:flex;flex-direction:column;gap:.5rem;}
+.pitem{display:flex;align-items:flex-start;gap:.7rem;padding:.65rem .9rem;border-radius:7px;border:1px solid var(--brd);}
+.pitem.high{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.05);}
+.pitem.mid{border-color:rgba(250,204,21,.3);background:rgba(250,204,21,.05);}
+.pitem.low{border-color:rgba(96,165,250,.25);background:rgba(96,165,250,.04);}
+.pbadge{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:3px;flex-shrink:0;margin-top:1px;letter-spacing:.5px;}
+.pbadge.high{background:rgba(248,113,113,.2);color:var(--alert);}
+.pbadge.mid{background:rgba(250,204,21,.2);color:var(--warn);}
+.pbadge.low{background:rgba(96,165,250,.15);color:var(--blue);}
+.ptext{font-size:.78rem;line-height:1.5;}
+.slist{display:flex;flex-direction:column;gap:.4rem;}
+.sitem{display:flex;align-items:flex-start;gap:.7rem;padding:.5rem 0;border-bottom:1px solid var(--brd);}
+.sitem:last-child{border-bottom:none;}
+.snum{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--jd-yellow);width:20px;flex-shrink:0;line-height:1.1;}
+.stext{font-size:.78rem;line-height:1.5;color:var(--mut);}
+.abox{border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.7rem;}
+.abox.warn{background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.2);}
+.abox.info{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.18);}
+.abox.ok{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);}
+.abox .aicon{font-size:1rem;margin-top:1px;}
+.abox .atxt{font-size:.76rem;line-height:1.6;}
+.loja-select{width:100%;background:var(--sur2);border:1px solid var(--brd2);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .8rem;border-radius:6px;cursor:pointer;}
+.loja-select:focus{outline:none;border-color:var(--jd-green);}
+.seg-pill{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;}
+.seg-pill-bar{flex:1;background:var(--brd);border-radius:99px;height:8px;overflow:hidden;}
+.seg-pill-fill{height:100%;border-radius:99px;}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-box">JD</div>
+    <h1>POWER SALES</h1>
+    <p>Cobertura ADR · 2026</p>
+  </div>
+  <div class="nav">
+    <div class="nav-sec">Visões</div>
+    <div class="ni active" onclick="showPage('geral',this)"><span class="ni-ic">📊</span>Visão Geral</div>
+    <div class="ni" onclick="showPage('regional',this)"><span class="ni-ic">🗂️</span>Por Regional</div>
+    <div class="ni" onclick="showPage('loja',this)"><span class="ni-ic">🏪</span>Por Loja</div>
+    <div class="ni" onclick="showPage('evolucao',this)"><span class="ni-ic">📈</span>Evolução</div>
+    <div class="nav-sec">Análises</div>
+    <div class="ni" onclick="showPage('cobertura',this)"><span class="ni-ic">🗺️</span>Cobertura ADR</div>
+    <div class="ni" onclick="showPage('segmentacao',this)"><span class="ni-ic">👥</span>Segmentação</div>
+    <div class="ni" onclick="showPage('mapeamento',this)"><span class="ni-ic">🌾</span>Mapeamento</div>
+    <div class="ni" onclick="showPage('implantacao',this)"><span class="ni-ic">🚀</span>Implantação</div>
+  </div>
+  <div class="sfoot"><p>Mar/2026 · Uso Interno</p></div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title">Dashboard Comercial — John Deere Paraná</span>
+    <div class="topbar-right">
+      <span class="mc">Meta mínima: <span>60%</span> ADR</span>
+      <span class="mc">Meta ideal: <span>80%</span> ADR</span>
+      <span class="dlc">DEADLINE: MARÇO 2026</span>
+    </div>
+  </div>
+  <div class="fbar">
+    <span class="fl">Regional:</span>
+    <button class="fb active" onclick="setReg('all',this)">Todas</button>
+    <button class="fb" onclick="setReg('REG 1',this)">REG 1</button>
+    <button class="fb" onclick="setReg('REG 2',this)">REG 2</button>
+    <button class="fb" onclick="setReg('REG 3',this)">REG 3</button>
+    <button class="fb" onclick="setReg('REG 4',this)">REG 4</button>
+    <div class="fdiv"></div>
+    <span class="fl">Status:</span>
+    <button class="fb active" onclick="setSt('all',this)">Todos</button>
+    <button class="fb" onclick="setSt('Finalizado',this)">Finalizados</button>
+    <button class="fb" onclick="setSt('Pendente',this)">Pendentes</button>
+  </div>
+
+  <!-- VISÃO GERAL -->
+  <div class="page active" id="page-geral">
+    <div class="kg5">
+      <div class="kc b"><div class="kl">Área ADR Total</div><div class="kv">2,7M</div><div class="ks">hectares na área de atuação</div></div>
+      <div class="kc y"><div class="kl">Área Mapeada</div><div class="kv">1,4M</div><div class="ks">1.403.119 ha no CRM</div></div>
+      <div class="kc y"><div class="kl">Cobertura Rede</div><div class="kv">54,6%</div><div class="ks">meta mínima: 60%</div></div>
+      <div class="kc g"><div class="kl">Lojas Finalizadas</div><div class="kv">10/16</div><div class="ks">4 consolidando · 1 pendente · 1 parcial</div></div>
+      <div class="kc g"><div class="kl">Clientes Segmentados</div><div class="kv">4.784</div><div class="ks">clientes segmentados</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Cobertura ADR da Rede vs Metas</h3></div>
+      <div class="cb">
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--mut);margin-bottom:.4rem;">
+          <span>Atual: <strong style="color:var(--warn)">54,6%</strong></span>
+          <span>Meta mín.: <strong style="color:var(--warn)">60%</strong></span>
+          <span>Meta ideal: <strong style="color:var(--ok)">80%</strong></span>
+        </div>
+        <div style="background:var(--brd);border-radius:99px;height:14px;overflow:hidden;position:relative;">
+          <div style="width:54.6%;height:100%;background:var(--warn);border-radius:99px;"></div>
+          <div style="position:absolute;top:0;bottom:0;left:60%;width:2px;background:rgba(255,255,255,.3);"></div>
+          <div style="position:absolute;top:0;bottom:0;left:80%;width:2px;background:rgba(255,255,255,.3);"></div>
+        </div>
+        <div style="position:relative;height:18px;margin-top:2px;">
+          <span style="position:absolute;left:54.6%;transform:translateX(-50%);font-size:.6rem;color:var(--warn);">▲ Atual</span>
+          <span style="position:absolute;left:60%;transform:translateX(-50%);font-size:.6rem;color:var(--mut);">60%</span>
+          <span style="position:absolute;left:80%;transform:translateX(-50%);font-size:.6rem;color:var(--ok);">80%</span>
+        </div>
+        <div id="rep-bars-geral" style="margin-top:1rem;display:grid;grid-template-columns:1fr 1fr;gap:.4rem .8rem;"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><h3>Status de Implantação</h3></div>
+        <div class="cb">
+          <div class="ring-wrap">
+            <div style="position:relative;width:130px;height:130px;flex-shrink:0;">
+              <svg width="130" height="130" viewBox="0 0 130 130">
+                <circle cx="65" cy="65" r="48" fill="none" stroke="#1a281a" stroke-width="16"/>
+                <circle cx="65" cy="65" r="48" fill="none" stroke="#4ade80" stroke-width="16" stroke-dasharray="188.5 113.1" stroke-dashoffset="-75.4" stroke-linecap="round"/>
+                <circle cx="65" cy="65" r="48" fill="none" stroke="#60a5fa" stroke-width="16" stroke-dasharray="75.4 226.2" stroke-dashoffset="-263.9" stroke-linecap="round"/>
+                <circle cx="65" cy="65" r="48" fill="none" stroke="#f87171" stroke-width="16" stroke-dasharray="37.7 263.9" stroke-dashoffset="-339.3" stroke-linecap="round"/>
+              </svg>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--ok);line-height:1;">16</div>
+                <div style="font-size:.58rem;color:var(--mut);">LOJAS</div>
+              </div>
+            </div>
+            <div class="ring-info">
+              <div class="leg-item"><div class="leg-dot" style="background:var(--ok)"></div>Finalizadas (10)</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div>Consolidando (4)</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--alert)"></div>Pendentes (2)</div>
+              <div style="margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--brd);">
+                <div style="font-size:.66rem;color:var(--mut);">Lojas ≥60% ADR</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--ok);">7 <span style="font-size:.85rem;color:var(--mut);">/ 16</span></div>
+              </div>
+              <div>
+                <div style="font-size:.66rem;color:var(--mut);">Lojas ≥80% ADR</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--warn);">1 <span style="font-size:.85rem;color:var(--mut);">/ 16</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Representatividade ADR por Loja</h3>
+          <div style="display:flex;gap:.5rem;font-size:.63rem;">
+            <span style="color:var(--ok)">■≥80%</span><span style="color:var(--warn)">■60–69%</span><span style="color:var(--alert)">■&lt;60%</span><span style="color:var(--blue)">■Pend.</span>
+          </div>
+        </div>
+        <div class="cb" id="rep-bars-loja"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><h3>Prioridade de Ações</h3></div>
+        <div class="cb">
+          <div class="plist">
+            <div class="pitem high"><span class="pbadge high">URGENTE</span><div class="ptext"><strong>Concluir Dois Vizinhos</strong> — única loja sem mapeamento iniciado. Início previsto próxima terça. Toledo e Marechal C. foram finalizados.</div></div>
+            <div class="pitem high"><span class="pbadge high">URGENTE</span><div class="ptext"><strong>Realeza — 2 consultores pendentes</strong> — 13% é provisório. Mapeamento dos 2 consultores restantes é crítico para fechar o dado real.</div></div>
+            <div class="pitem mid"><span class="pbadge mid">ATENÇÃO</span><div class="ptext"><strong>Cianorte (28%) e Mangueirinha (35%)</strong> — segmentação finalizada mas ADR muito abaixo de 60%. Avaliar expansão de carteira.</div></div>
+            <div class="pitem mid"><span class="pbadge mid">ATENÇÃO</span><div class="ptext"><strong>Medianeira (47%) e Vitorino (16%)</strong> — abaixo da meta mínima. Vitorino ainda consolidando segmentos.</div></div>
+            <div class="pitem low"><span class="pbadge low">MONITOR</span><div class="ptext"><strong>Umuarama (59%) e Palmas (67%)</strong> — próximas da meta. Pequeno esforço adicional coloca ambas acima de 60%.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Próximos Passos — Power Sales</h3></div>
+        <div class="cb">
+          <div class="slist">
+            <div class="sitem"><span class="snum">1</span><div class="stext"><strong>Março 2026 — deadline total:</strong> Toledo, Dois Vizinhos e Marechal C. completam mapeamento. Fechar portfólios de Realeza.</div></div>
+            <div class="sitem"><span class="snum">2</span><div class="stext"><strong>Fechar carteiras REG 3:</strong> Cianorte e Umuarama com segmentação consolidada, pendente fechamento formal por consultor.</div></div>
+            <div class="sitem"><span class="snum">3</span><div class="stext"><strong>Reavaliar cobertura pós-implantação:</strong> com 100% das lojas operando, revisar % ADR e definir ações de expansão por loja.</div></div>
+            <div class="sitem"><span class="snum">4</span><div class="stext"><strong>V2 — Frequência de visitas:</strong> confirmar campo de última visita no CRM. SAM=15d · KAM=20d · CC=30d · Varejo=60d.</div></div>
+            <div class="sitem"><span class="snum">5</span><div class="stext"><strong>Power BI em tempo real:</strong> substituir Excel por conexão direta ao Power Sales. Configurar RLS por regional/loja.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POR REGIONAL -->
+  <div class="page" id="page-regional">
+    <div style="display:flex;gap:.8rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
+      <span style="font-size:.78rem;color:var(--mut);">Selecione:</span>
+      <button class="fb active" id="rb-all" onclick="setRV('all',this)">Todas</button>
+      <button class="fb" id="rb-r1" onclick="setRV('REG 1',this)">REG 1</button>
+      <button class="fb" id="rb-r2" onclick="setRV('REG 2',this)">REG 2</button>
+      <button class="fb" id="rb-r3" onclick="setRV('REG 3',this)">REG 3</button>
+      <button class="fb" id="rb-r4" onclick="setRV('REG 4',this)">REG 4</button>
+    </div>
+    <div id="reg-content"></div>
+  </div>
+
+  <!-- POR LOJA -->
+  <div class="page" id="page-loja">
+    <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.2rem;">
+      <span style="font-size:.78rem;color:var(--mut);">Selecione a loja:</span>
+      <select class="loja-select" style="max-width:300px;" id="loja-sel" onchange="renderLoja(this.value)">
+        <option value="">— escolha uma loja —</option>
+      </select>
+    </div>
+    <div id="loja-content"><div style="text-align:center;padding:3rem;color:var(--mut);font-size:.82rem;">Selecione uma loja acima</div></div>
+  </div>
+
+  <!-- EVOLUÇÃO TEMPORAL -->
+  <div class="page" id="page-evolucao">
+    <div class="abox ok" style="margin-bottom:1.2rem;">
+      <span class="aicon">📅</span>
+      <div class="atxt"><strong style="color:var(--ok)">Marco zero: Março/2026 — 16/03/2026.</strong> Atualização toda <strong>segunda-feira</strong> com os dados da semana anterior. Ao fechar cada mês, o snapshot mensal é registrado no Excel (aba <strong>Evolucao_Snapshots</strong>) para compor a visão de evolução. Quanto mais meses acumulados, mais rica a análise de tendência.</div>
+    </div>
+
+    <!-- Slicer de período -->
+    <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap;">
+      <span class="fl">Visualizar:</span>
+      <button class="fb active" onclick="setSnapshotView('all',this)">Todos os períodos</button>
+      <button class="fb" onclick="setSnapshotView('last3',this)">Últimos 3 meses</button>
+      <button class="fb" onclick="setSnapshotView('last6',this)">Últimos 6 meses</button>
+      <div class="fdiv"></div>
+      <span class="fl">Loja:</span>
+      <select id="evo-loja-sel" class="loja-select" style="max-width:220px;" onchange="renderEvolucao()">
+        <option value="REDE">Rede completa</option>
+      </select>
+    </div>
+
+    <!-- KPIs evolução -->
+    <div class="kg" style="margin-bottom:1.2rem;" id="evo-kpis"></div>
+
+    <!-- Chart ADR evolution -->
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><h3>Evolução da Cobertura ADR (%)</h3><span style="font-size:.68rem;color:var(--mut);">linha verde = meta 80% · linha amarela = meta 60%</span></div>
+        <div class="cb" style="padding:.8rem 1.1rem;">
+          <div style="position:relative;width:100%;height:220px;">
+            <canvas id="evo-chart-adr"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Evolução de Clientes Segmentados</h3><span style="font-size:.68rem;color:var(--mut);">total acumulado</span></div>
+        <div class="cb" style="padding:.8rem 1.1rem;">
+          <div style="position:relative;width:100%;height:220px;">
+            <canvas id="evo-chart-cli"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela de snapshots -->
+    <div class="card">
+      <div class="ch"><h3>Histórico de Snapshots</h3>
+        <div style="font-size:.68rem;color:var(--mut);">atualizado no Excel aba Evolucao_Snapshots → reimporte no Power BI</div>
+      </div>
+      <table class="tbl">
+        <thead><tr>
+          <th>Período</th><th>Loja / Rede</th>
+          <th style="text-align:center">Área Mapeada (ha)</th>
+          <th style="text-align:center">ADR Total (ha)</th>
+          <th style="text-align:center">Cobertura %</th>
+          <th style="text-align:center">Clientes Seg.</th>
+          <th style="text-align:center">vs Meta 60%</th>
+          <th style="text-align:center">vs Meta 80%</th>
+        </tr></thead>
+        <tbody id="evo-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="abox info" style="margin-top:1rem;">
+      <span class="aicon">💡</span>
+      <div class="atxt"><strong style="color:var(--blue)">Como registrar snapshots:</strong> abra o Excel (aba <strong>Evolucao_Snapshots</strong>), adicione uma nova linha para cada loja com o mês atual, preencha área mapeada e total de clientes. Salve e reimporte no Power BI. O HTML pode ser atualizado colando os dados no array <code style="background:var(--sur2);padding:1px 4px;border-radius:3px;font-size:.72rem;">snapshots</code> no código.</div>
+    </div>
+  </div>
+
+
+  <div class="page" id="page-cobertura">
+    <div class="kg">
+      <div class="kc b"><div class="kl">ADR Total</div><div class="kv">2,7M</div><div class="ks">ha total</div></div>
+      <div class="kc y"><div class="kl">Mapeado</div><div class="kv">1,4M</div><div class="ks">ha no CRM</div></div>
+      <div class="kc y"><div class="kl">Cobertura</div><div class="kv">51%</div><div class="ks">da área total</div></div>
+      <div class="kc r"><div class="kl">Não Mapeado</div><div class="kv">1,2M</div><div class="ks">ha — oportunidade</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Detalhe por Município</h3>
+        <div style="display:flex;gap:.5rem;font-size:.63rem;color:var(--mut);">
+          <span style="color:var(--ok)">■≥80%</span><span style="color:var(--warn)">■60–69%</span><span style="color:var(--alert)">■&lt;60%</span><span style="color:var(--blue)">■Pendente</span>
+        </div>
+      </div>
+      <table class="tbl"><thead><tr>
+        <th>Regional</th><th>Município</th>
+        <th style="text-align:right">Área Mapeada (ha)</th>
+        <th style="text-align:right">ADR Total (ha)</th>
+        <th style="text-align:center">Represent.%</th>
+        <th style="text-align:center">Cobertura</th>
+        <th style="text-align:center">vs Meta 60%</th>
+        <th style="text-align:center">Status</th>
+      </tr></thead>
+      <tbody id="cob-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- SEGMENTAÇÃO -->
+  <div class="page" id="page-segmentacao">
+    <div class="kg">
+      <div class="kc g"><div class="kl">Total Clientes</div><div class="kv">4.784</div><div class="ks">filiais c/ dados</div></div>
+      <div class="kc b"><div class="kl">KAM</div><div class="kv">508</div><div class="ks">visita cada 20 dias</div></div>
+      <div class="kc y"><div class="kl">SAM</div><div class="kv">124</div><div class="ks">visita cada 15 dias</div></div>
+      <div class="kc g"><div class="kl">Varejo + CC</div><div class="kv">4.152</div><div class="ks">visita 30–60 dias</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Segmentação por Município</h3></div>
+      <table class="tbl"><thead><tr>
+        <th>Regional</th><th>Filial</th>
+        <th style="text-align:center">Varejo</th><th style="text-align:center">Conta Chave</th>
+        <th style="text-align:center">KAM</th><th style="text-align:center">SAM</th>
+        <th style="text-align:center">Total</th><th style="text-align:center">Status</th>
+      </tr></thead>
+      <tbody id="seg-tbody"></tbody>
+      <tfoot><tr class="tot"><td colspan="2">TOTAL MAPEADO</td>
+        <td style="text-align:center;color:var(--jd-yellow)">3.225</td>
+        <td style="text-align:center;color:var(--jd-yellow)">927</td>
+        <td style="text-align:center;color:var(--jd-yellow)">508</td>
+        <td style="text-align:center;color:var(--jd-yellow)">124</td>
+        <td style="text-align:center;color:var(--jd-yellow);font-size:1rem">4.784</td>
+        <td></td>
+      </tr></tfoot></table>
+    </div>
+  </div>
+
+  <!-- MAPEAMENTO -->
+  <div class="page" id="page-mapeamento">
+    <div class="kg">
+      <div class="kc b"><div class="kl">ADR Total</div><div class="kv">2,7M</div><div class="ks">ha área de atuação</div></div>
+      <div class="kc y"><div class="kl">Mapeado no CRM</div><div class="kv">1,5M</div><div class="ks">54,6% representatividade</div></div>
+      <div class="kc g"><div class="kl">Clientes Segmentados</div><div class="kv">4.784</div><div class="ks">filiais c/ dados</div></div>
+      <div class="kc r"><div class="kl">Área Não Mapeada</div><div class="kv">1,3M</div><div class="ks">oportunidade expansão</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Visão Consolidada — ADR + Segmentação</h3></div>
+      <table class="tbl"><thead><tr>
+        <th>Regional</th><th>Loja</th>
+        <th style="text-align:right">Área Mapeada</th><th style="text-align:center">ADR%</th>
+        <th style="text-align:center">Varejo</th><th style="text-align:center">CC</th>
+        <th style="text-align:center">KAM</th><th style="text-align:center">SAM</th>
+        <th style="text-align:center">Total</th><th style="text-align:center">Status</th>
+      </tr></thead>
+      <tbody id="map-tbody"></tbody></table>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="ch"><h3>Composição de Clientes</h3></div><div class="cb" id="seg-bars-map"></div></div>
+      <div class="card"><div class="ch"><h3>ADR por Loja</h3></div><div class="cb" id="adr-bars-map"></div></div>
+    </div>
+    <div class="abox info"><span class="aicon">🔵</span><div class="atxt"><strong style="color:var(--blue)">V2 — Frequência de Visitas:</strong> após confirmar campo de data de última visita no CRM. SAM=15d · KAM=20d · CC=30d · Varejo=60d.</div></div>
+  </div>
+
+  <!-- IMPLANTAÇÃO -->
+  <div class="page" id="page-implantacao">
+    <div class="kg">
+      <div class="kc g"><div class="kl">Finalizadas</div><div class="kv">10</div><div class="ks">100% completas</div></div>
+      <div class="kc b"><div class="kl">Consolidando</div><div class="kv">4</div><div class="ks">em andamento</div></div>
+      <div class="kc r"><div class="kl">Pendentes</div><div class="kv">2</div><div class="ks">início em breve</div></div>
+      <div class="kc y"><div class="kl">% Conclusão Geral</div><div class="kv">68%</div><div class="ks">média ponderada</div></div>
+    </div>
+    <div class="card"><div class="ch"><h3>Progresso por Loja</h3></div><div class="cb" id="impl-bars"></div></div>
+  </div>
+
+</div>
+
+<script>
+const lojas=[
+  {reg:"REG 1",mun:"Medianeira",   areaMapa:99416,  adrTotal:210003,rep:0.473,status:"Finalizado",   deadline:"Concluído",    pct:100,fase:"Operação"},
+  {reg:"REG 1",mun:"Toledo",       areaMapa:63871,  adrTotal:100508,rep:0.635,status:"Finalizado",   deadline:"Março 2026",   pct:80, fase:"Segmentação"},
+  {reg:"REG 1",mun:"Marechal C.",  areaMapa:25954,  adrTotal:51572, rep:0.503,status:"Finalizado",   deadline:"Março 2026",   pct:90, fase:"Aguardando Operação"},
+  {reg:"REG 1",mun:"Palotina",     areaMapa:121676, adrTotal:198370,rep:0.613,status:"Finalizado",   deadline:"Concluído",    pct:100,fase:"Operação"},
+  {reg:"REG 2",mun:"Cascavel",     areaMapa:209092, adrTotal:289611,rep:0.722,status:"Finalizado",   deadline:"Concluído",    pct:100,fase:"Operação"},
+  {reg:"REG 2",mun:"Assis C.",     areaMapa:139382, adrTotal:188847,rep:0.738,status:"Finalizado",   deadline:"Concluído",    pct:100,fase:"Operação"},
+  {reg:"REG 2",mun:"Ubiratã",      areaMapa:134739, adrTotal:140617,rep:0.958,status:"Finalizado",   deadline:"Concluído",    pct:100,fase:"Operação"},
+  {reg:"REG 3",mun:"Campo Mourão", areaMapa:283818, adrTotal:386983,rep:0.733,status:"Finalizado",   deadline:"Concluído",    pct:100,fase:"Operação"},
+  {reg:"REG 3",mun:"Goioerê",      areaMapa:123952, adrTotal:171348,rep:0.723,status:"Consolidando", deadline:"Março 2026",     pct:70, fase:"Consolidando"},
+  {reg:"REG 3",mun:"Umuarama",     areaMapa:126995, adrTotal:213801,rep:0.594,status:"Finalizado",   deadline:"Março 2026",   pct:80, fase:"Fechamento Carteiras"},
+  {reg:"REG 3",mun:"Cianorte",     areaMapa:36142,  adrTotal:130117,rep:0.278,status:"Finalizado",   deadline:"Março 2026",   pct:90, fase:"Aguardando Operação"},
+  {reg:"REG 4",mun:"Dois Vizinhos",areaMapa:null,   adrTotal:144851,rep:null, status:"Pendente",     deadline:"Próx. terça",  pct:10, fase:"Mapeamento/Segmento"},
+  {reg:"REG 4",mun:"Realeza",      areaMapa:20662,  adrTotal:156766,rep:0.132,status:"Parcial",      deadline:"Março 2026",   pct:50, fase:"Parcial (2 consult.)"},
+  {reg:"REG 4",mun:"Vitorino",     areaMapa:29089,  adrTotal:186241,rep:0.156,status:"Consolidando", deadline:"Março 2026",   pct:60, fase:"Consolidando"},
+  {reg:"REG 4",mun:"Mangueirinha", areaMapa:35329,  adrTotal:102316,rep:0.345,status:"Consolidando", deadline:"Março 2026",   pct:60, fase:"Consolidando"},
+  {reg:"REG 4",mun:"Palmas",       areaMapa:42827,  adrTotal:63902, rep:0.670,status:"Consolidando", deadline:"Março 2026",   pct:60, fase:"Consolidando"},
+];
+const segData=[
+  {reg:"REG 1",mun:"Medianeira",   varejo:369,cc:241,kam:35, sam:null,status:"Finalizado"},
+  {reg:"REG 1",mun:"Toledo",       varejo:null,cc:null,kam:null,sam:null,status:"Pendente — Segmentação"},
+  {reg:"REG 1",mun:"Marechal C.",  varejo:161,cc:24, kam:4,  sam:1,   status:"Finalizado"},
+  {reg:"REG 1",mun:"Palotina",     varejo:360,cc:123,kam:41, sam:11,  status:"Finalizado"},
+  {reg:"REG 2",mun:"Cascavel",     varejo:436,cc:128,kam:101,sam:37,  status:"Finalizado"},
+  {reg:"REG 2",mun:"Assis C.",     varejo:341,cc:111,kam:55, sam:4,   status:"Finalizado"},
+  {reg:"REG 2",mun:"Ubiratã",      varejo:307,cc:67, kam:27, sam:29,  status:"Finalizado"},
+  {reg:"REG 3",mun:"Campo Mourão", varejo:366,cc:118,kam:137,sam:15,  status:"Finalizado"},
+  {reg:"REG 3",mun:"Goioerê",      varejo:235,cc:72, kam:46, sam:24,  status:"Consolidando"},
+  {reg:"REG 3",mun:"Umuarama",     varejo:380,cc:6,  kam:48, sam:2,   status:"Finalizado"},
+  {reg:"REG 3",mun:"Cianorte",     varejo:270,cc:37, kam:14, sam:1,   status:"Finalizado"},
+  {reg:"REG 4",mun:"Dois Vizinhos",varejo:null,cc:null,kam:null,sam:null,status:"Pendente"},
+  {reg:"REG 4",mun:"Realeza",      varejo:null,cc:null,kam:null,sam:null,status:"Parcial"},
+  {reg:"REG 4",mun:"Vitorino",     varejo:null,cc:null,kam:null,sam:null,status:"Consolidando"},
+  {reg:"REG 4",mun:"Mangueirinha", varejo:null,cc:null,kam:null,sam:null,status:"Consolidando"},
+  {reg:"REG 4",mun:"Palmas",       varejo:null,cc:null,kam:null,sam:null,status:"Consolidando"},
+];
+
+let aReg="all",aSt="all",aRV="all";
+
+const fmt=n=>n!=null?n.toLocaleString('pt-BR'):'—';
+function rc(r){if(r==null)return'var(--blue)';if(r>=0.80)return'var(--ok)';if(r>=0.60)return'var(--warn)';return'var(--alert)';}
+function stag(s){const m={Finalizado:'t-ok',Parcial:'t-part',Pendente:'t-pend','Pendente — Segmentação':'t-part',Consolidando:'t-cons'};return`<span class="tag ${m[s]||'t-pend'}">${s}</span>`;}
+function pass(l){if(aReg!=='all'&&l.reg!==aReg)return false;if(aSt!=='all'&&l.status!==aSt)return false;return true;}
+
+function renderGeral(){
+  const sorted=[...lojas].filter(l=>l.rep!=null).sort((a,b)=>b.rep-a.rep);
+  document.getElementById('rep-bars-loja').innerHTML=sorted.map(l=>`
+    <div class="br"><div class="bn" title="${l.mun}(${l.reg})">${l.mun}</div>
+    <div class="bw"><div class="bf" style="width:${Math.round(l.rep*100)}%;background:${rc(l.rep)}"></div></div>
+    <div class="bp" style="color:${rc(l.rep)}">${Math.round(l.rep*100)}%</div></div>`).join('');
+  document.getElementById('rep-bars-geral').innerHTML=[...lojas].sort((a,b)=>(b.rep||0)-(a.rep||0)).map(l=>`
+    <div style="display:flex;align-items:center;gap:.4rem;">
+      <div style="font-size:.67rem;color:var(--txt);width:95px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.mun}</div>
+      <div style="flex:1;background:var(--brd);border-radius:99px;height:5px;overflow:hidden;"><div style="width:${l.rep?Math.round(l.rep*100):0}%;height:100%;background:${rc(l.rep)};border-radius:99px;"></div></div>
+      <div style="font-size:.67rem;font-weight:600;color:${rc(l.rep)};width:26px;text-align:right;">${l.rep?Math.round(l.rep*100)+'%':'—'}</div>
+    </div>`).join('');
+}
+
+function buildRegAction(reg, lr) {
+  const pendentes    = lr.filter(l => l.status === 'Pendente');
+  const parciais     = lr.filter(l => l.status === 'Parcial');
+  const consolidando = lr.filter(l => l.status === 'Consolidando');
+  const acima80      = lr.filter(l => l.rep != null && l.rep >= 0.80);
+  const acima60      = lr.filter(l => l.rep != null && l.rep >= 0.60 && l.rep < 0.80);
+  const abaixo60     = lr.filter(l => l.rep != null && l.rep < 0.60);
+  const semDado      = lr.filter(l => l.rep == null && l.status !== 'Parcial');
+  const parts = [];
+
+  if (pendentes.length)
+    parts.push(`${pendentes.map(l=>`${l.mun}`).join(', ')} ${pendentes.length>1?'pendentes — mapeamento não iniciado':'pendente — mapeamento não iniciado'}.`);
+  if (parciais.length)
+    parts.push(`${parciais.map(l=>`${l.mun} (${Math.round(l.rep*100)}%)`).join(', ')} ${parciais.length>1?'com dados parciais':'com dados parciais'} — concluir consultores pendentes.`);
+  if (consolidando.length)
+    parts.push(`${consolidando.map(l=>l.mun).join(', ')} ${consolidando.length>1?'consolidando segmentos':'consolidando segmentos'}.`);
+  if (acima80.length)
+    parts.push(`${acima80.map(l=>`${l.mun} (${Math.round(l.rep*100)}%)`).join(', ')} ${acima80.length>1?'acima de 80%':'acima de 80%'} — meta ideal atingida.`);
+  if (acima60.length)
+    parts.push(`${acima60.map(l=>`${l.mun} (${Math.round(l.rep*100)}%)`).join(', ')} ${acima60.length>1?'dentro da meta mínima':'dentro da meta mínima'} (60–79%).`);
+  if (abaixo60.length)
+    parts.push(`${abaixo60.map(l=>`${l.mun} (${Math.round(l.rep*100)}%)`).join(', ')} abaixo de 60% — avaliar expansão de carteira.`);
+
+  return parts.length ? parts.join(' ') : 'Sem ações críticas pendentes.';
+}
+
+function renderRegional(){
+  const regs=aRV==='all'?['REG 1','REG 2','REG 3','REG 4']:[aRV];
+  document.getElementById('reg-content').innerHTML=regs.map(reg=>{
+    const lr=lojas.filter(l=>l.reg===reg);
+    const sr=segData.filter(l=>l.reg===reg);
+    const am=lr.reduce((a,l)=>a+(l.areaMapa||0),0);
+    const at=lr.reduce((a,l)=>a+(l.adrTotal||0),0);
+    const rr=at>0?am/at:null;
+    const fin=lr.filter(l=>l.status==='Finalizado').length;
+    const tv=sr.reduce((a,s)=>a+(s.varejo||0),0);
+    const tc=sr.reduce((a,s)=>a+(s.cc||0),0);
+    const tk=sr.reduce((a,s)=>a+(s.kam||0),0);
+    const ts=sr.reduce((a,s)=>a+(s.sam||0),0);
+    const tot=tv+tc+tk+ts;
+    return`<div style="margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem;flex-wrap:wrap;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--jd-yellow);">${reg}</div>
+        <div style="font-size:.74rem;color:var(--mut);">${lr.length} lojas · ${fin} finalizadas</div>
+        ${rr!=null?`<div style="font-size:.85rem;font-weight:600;color:${rc(rr)};margin-left:auto;">${Math.round(rr*100)}% ADR</div>`:''}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;margin-bottom:.8rem;">
+        <div class="kc y" style="padding:.7rem .9rem;"><div class="kl">Área Mapeada</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--warn);">${am>0?Math.round(am/1000)+'K':'—'}</div><div class="ks">ha no CRM</div></div>
+        <div class="kc ${rr!=null&&rr>=0.60?'g':'r'}" style="padding:.7rem .9rem;"><div class="kl">Cobertura ADR</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:${rc(rr)};">${rr!=null?Math.round(rr*100)+'%':'—'}</div><div class="ks">meta 60%/80%</div></div>
+        <div class="kc g" style="padding:.7rem .9rem;"><div class="kl">Clientes</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--ok);">${tot>0?tot.toLocaleString('pt-BR'):'—'}</div><div class="ks">segmentados</div></div>
+        <div class="kc b" style="padding:.7rem .9rem;"><div class="kl">Finalizadas</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--blue);">${fin}<span style="font-size:.9rem;color:var(--mut);">/${lr.length}</span></div><div class="ks">lojas</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem;">
+        <div class="card">
+          <div class="ch"><h3>Cobertura ADR por Loja</h3></div>
+          <div class="cb">
+            ${lr.map(l=>`<div class="br" style="margin-bottom:.7rem;">
+              <div class="bn">${l.mun}</div>
+              <div style="flex:1;background:var(--brd);border-radius:99px;height:8px;overflow:hidden;position:relative;">
+                <div style="width:${l.rep?Math.round(l.rep*100):0}%;height:100%;background:${rc(l.rep)};border-radius:99px;"></div>
+                <div style="position:absolute;top:0;bottom:0;left:60%;width:1px;background:rgba(250,204,21,.4);"></div>
+                <div style="position:absolute;top:0;bottom:0;left:80%;width:1px;background:rgba(74,222,128,.4);"></div>
+              </div>
+              <div class="bp" style="color:${rc(l.rep)}">${l.rep?Math.round(l.rep*100)+'%':'—'}</div>
+              <div style="width:70px;text-align:right;">${stag(l.status)}</div>
+            </div>`).join('')}
+            <div style="font-size:.62rem;color:var(--mut);margin-top:.3rem;">linha amarela=60% · linha verde=80%</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><h3>Segmentação de Clientes</h3></div>
+          <div class="cb">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.6rem;">
+              <div style="background:var(--sur2);border-radius:6px;padding:.4rem .6rem;"><div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:1px;">Varejo</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--ok);">${tv||'—'}</div></div>
+              <div style="background:var(--sur2);border-radius:6px;padding:.4rem .6rem;"><div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:1px;">Conta Chave</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--blue);">${tc||'—'}</div></div>
+              <div style="background:var(--sur2);border-radius:6px;padding:.4rem .6rem;"><div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:1px;">KAM</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--warn);">${tk||'—'}</div></div>
+              <div style="background:var(--sur2);border-radius:6px;padding:.4rem .6rem;"><div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:1px;">SAM</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--alert);">${ts||'—'}</div></div>
+            </div>
+            <table class="tbl" style="font-size:.71rem;">
+              <thead><tr><th>Loja</th><th style="text-align:center">V</th><th style="text-align:center">CC</th><th style="text-align:center">K</th><th style="text-align:center">S</th><th style="text-align:center">Total</th></tr></thead>
+              <tbody>${sr.map(s=>{const t=(s.varejo||0)+(s.cc||0)+(s.kam||0)+(s.sam||0);return`<tr><td style="font-weight:500">${s.mun}</td><td style="text-align:center">${s.varejo??'—'}</td><td style="text-align:center">${s.cc??'—'}</td><td style="text-align:center">${s.kam??'—'}</td><td style="text-align:center">${s.sam??'—'}</td><td style="text-align:center;font-weight:600;color:var(--jd-yellow)">${t>0?t:'—'}</td></tr>`;}).join('')}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="abox ${rr!=null&&rr>=0.60?'ok':'warn'}" style="margin-bottom:0;">
+        <span class="aicon">${rr!=null&&rr>=0.60?'✅':'⚠️'}</span>
+        <div class="atxt">${buildRegAction(reg, lr)}</div>
+      </div>
+    </div>`;
+  }).join('<hr style="border:none;border-top:1px solid var(--brd2);margin:1rem 0;">');
+}
+
+function renderLoja(mun){
+  if(!mun){document.getElementById('loja-content').innerHTML='<div style="text-align:center;padding:3rem;color:var(--mut);font-size:.82rem;">Selecione uma loja acima</div>';return;}
+  const l=lojas.find(x=>x.mun===mun);
+  const s=segData.find(x=>x.mun===mun)||{};
+  const tot=(s.varejo||0)+(s.cc||0)+(s.kam||0)+(s.sam||0);
+  const rp=l.rep!=null?Math.round(l.rep*100):null;
+  const col=rc(l.rep);
+  const g60=rp!=null?Math.max(0,60-rp):null;
+  const g70=rp!=null?Math.max(0,80-rp):null;
+  const segs=[{n:'Varejo',v:s.varejo,c:'var(--ok)',f:'60d'},{n:'Conta Chave',v:s.cc,c:'var(--blue)',f:'30d'},{n:'KAM',v:s.kam,c:'var(--warn)',f:'20d'},{n:'SAM',v:s.sam,c:'var(--alert)',f:'15d'}];
+  const acts=[];
+  if(l.status==='Pendente')acts.push({lv:'high',t:'Iniciar mapeamento e segmentação — loja ainda não implantada no Power Sales.'});
+  if(l.status==='Parcial')acts.push({lv:'high',t:'Concluir mapeamento dos 2 consultores pendentes para fechar representatividade real.'});
+  if(l.status==='Consolidando')acts.push({lv:'mid',t:'Finalizar consolidação dos segmentos e fechar carteiras por consultor.'});
+  if(rp!=null&&rp<60)acts.push({lv:'mid',t:`Cobertura ADR em ${rp}% — abaixo da meta mínima de 60%. Avaliar expansão de carteira para novos produtores.`});
+  if(rp!=null&&rp>=60&&rp<70)acts.push({lv:'low',t:`Dentro da meta mínima. Faltam ${g70}pp para meta ideal de 80%.`});
+  if(rp!=null&&rp>=70)acts.push({lv:'low',t:`Meta ideal de 80% atingida! Foco em qualidade dos dados e manutenção de carteira.`});
+  if(tot>0&&(s.kam||0)+(s.sam||0)>0)acts.push({lv:'low',t:`${(s.kam||0)+(s.sam||0)} clientes de alta prioridade (KAM+SAM) — garantir frequência de visitas quando o acompanhamento semanal estiver ativo.`});
+
+  document.getElementById('loja-content').innerHTML=`
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;color:var(--jd-yellow);">${mun}</div>
+      ${stag(l.status)}
+      <div style="font-size:.76rem;color:var(--mut);">${l.reg} · ${l.deadline}</div>
+      ${rp!=null?`<div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:${col};margin-left:auto;">${rp}% <span style="font-size:.8rem;color:var(--mut);">ADR</span></div>`:''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.2rem;">
+      <div class="kc ${l.rep!=null&&l.rep>=0.60?'g':'r'}" style="padding:.8rem 1rem;"><div class="kl">Cobertura ADR</div><div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:${col};">${rp!=null?rp+'%':'—'}</div><div class="ks">meta: 60%/80%</div></div>
+      <div class="kc b" style="padding:.8rem 1rem;"><div class="kl">Área Mapeada</div><div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--blue);">${l.areaMapa?Math.round(l.areaMapa/1000)+'K':'—'}</div><div class="ks">ha no CRM</div></div>
+      <div class="kc g" style="padding:.8rem 1rem;"><div class="kl">Total Clientes</div><div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--ok);">${tot||'—'}</div><div class="ks">segmentados</div></div>
+      <div class="kc y" style="padding:.8rem 1rem;"><div class="kl">KAM + SAM</div><div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--warn);">${(s.kam||0)+(s.sam||0)||'—'}</div><div class="ks">alta prioridade</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;">
+      <div class="card">
+        <div class="ch"><h3>Cobertura ADR vs Metas</h3></div>
+        <div class="cb">
+          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--mut);margin-bottom:.3rem;">
+            <span>Atual: <strong style="color:${col}">${rp!=null?rp+'%':'Pendente'}</strong></span>
+            <span>Mín: <strong style="color:var(--warn)">60%</strong></span>
+            <span>Ideal: <strong style="color:var(--ok)">80%</strong></span>
+          </div>
+          <div style="background:var(--brd);border-radius:99px;height:16px;overflow:hidden;position:relative;margin-bottom:.4rem;">
+            <div style="width:${rp||0}%;height:100%;background:${col};border-radius:99px;transition:width .5s;"></div>
+            <div style="position:absolute;top:0;bottom:0;left:60%;width:2px;background:rgba(250,204,21,.5);"></div>
+            <div style="position:absolute;top:0;bottom:0;left:80%;width:2px;background:rgba(74,222,128,.5);"></div>
+          </div>
+          ${g60!=null&&g60>0?`<div class="abox warn" style="margin:0;padding:.5rem .7rem;"><span class="aicon" style="font-size:.8rem;">⚠️</span><div class="atxt">Faltam <strong style="color:var(--warn)">${g60}pp</strong> para meta mínima de 60%</div></div>`:''}
+          ${g60===0&&g70!=null&&g70>0?`<div class="abox ok" style="margin:0;padding:.5rem .7rem;"><span class="aicon" style="font-size:.8rem;">✅</span><div class="atxt">Meta mínima atingida! Faltam <strong style="color:var(--ok)">${g70}pp</strong> para meta ideal de 80%</div></div>`:''}
+          ${rp!=null&&rp>=70?`<div class="abox ok" style="margin:0;padding:.5rem .7rem;"><span class="aicon" style="font-size:.8rem;">🏆</span><div class="atxt"><strong style="color:var(--ok)">Meta ideal de 80% atingida!</strong></div></div>`:''}
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><h3>Composição de Clientes</h3></div>
+        <div class="cb">
+          ${tot>0?segs.map(si=>{const pv=si.v&&tot>0?Math.round(si.v/tot*100):0;return`<div class="seg-pill"><div style="font-size:.72rem;color:${si.c};width:90px;flex-shrink:0;">${si.n} <span style="color:var(--mut);font-size:.62rem;">(${si.f})</span></div><div class="seg-pill-bar"><div class="seg-pill-fill" style="width:${pv}%;background:${si.c};"></div></div><div style="font-size:.7rem;font-weight:600;color:${si.c};width:68px;text-align:right;flex-shrink:0;">${si.v!=null?si.v+' ('+pv+'%)':'—'}</div></div>`;}).join(''):`<div style="text-align:center;padding:1.5rem;color:var(--mut);font-size:.78rem;">Segmentação ${l.status==='Pendente'?'ainda não iniciada':'em andamento'}</div>`}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>Ações Recomendadas</h3></div>
+      <div class="cb">
+        <div class="plist">
+          ${acts.length>0?acts.map(a=>`<div class="pitem ${a.lv}"><span class="pbadge ${a.lv}">${a.lv==='high'?'URGENTE':a.lv==='mid'?'ATENÇÃO':'MONITOR'}</span><div class="ptext">${a.t}</div></div>`).join(''):'<div style="color:var(--ok);font-size:.78rem;">Sem ações críticas pendentes ✓</div>'}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderCobertura(){
+  const f=lojas.filter(pass);
+  const tm=f.reduce((a,l)=>a+(l.areaMapa||0),0);
+  const ta=f.reduce((a,l)=>a+(l.adrTotal||0),0);
+  document.getElementById('cob-tbody').innerHTML=f.map(l=>{
+    const rp=l.rep!=null?Math.round(l.rep*100):null;
+    const vs=rp!=null?(rp>=60?`<span style="color:var(--ok)">+${rp-60}pp</span>`:`<span style="color:var(--alert)">-${60-rp}pp</span>`):'—';
+    return`<tr>
+      <td style="color:var(--mut);font-size:.71rem;">${l.reg}</td>
+      <td style="font-weight:500">${l.mun}</td>
+      <td style="text-align:right">${fmt(l.areaMapa)}</td>
+      <td style="text-align:right">${fmt(l.adrTotal)}</td>
+      <td style="text-align:center;font-weight:700;color:${rc(l.rep)}">${rp!=null?rp+'%':'—'}</td>
+      <td style="padding:.4rem .85rem;"><div style="background:var(--brd);border-radius:99px;height:6px;overflow:hidden;"><div style="width:${l.rep?Math.round(l.rep*100):0}%;height:100%;background:${rc(l.rep)};border-radius:99px;"></div></div></td>
+      <td style="text-align:center;font-size:.74rem;">${vs}</td>
+      <td style="text-align:center">${stag(l.status)}</td>
+    </tr>`;}).join('')+`<tr class="tot"><td colspan="2">FILTRO ATUAL</td><td style="text-align:right;color:var(--jd-yellow)">${fmt(tm)}</td><td style="text-align:right;color:var(--jd-yellow)">${fmt(ta)}</td><td style="text-align:center;font-weight:700;color:var(--jd-yellow)">${ta?Math.round(tm/ta*100)+'%':'—'}</td><td colspan="3"></td></tr>`;
+}
+
+function renderSeg(){
+  const na='<span style="color:var(--mut)">—</span>';
+  document.getElementById('seg-tbody').innerHTML=segData.filter(s=>{const l=lojas.find(x=>x.mun===s.mun);return l&&pass(l);}).map(s=>{
+    const t=(s.varejo||0)+(s.cc||0)+(s.kam||0)+(s.sam||0);
+    return`<tr><td style="color:var(--mut);font-size:.71rem;">${s.reg}</td><td style="font-weight:500">${s.mun}</td><td style="text-align:center">${s.varejo??na}</td><td style="text-align:center">${s.cc??na}</td><td style="text-align:center">${s.kam??na}</td><td style="text-align:center">${s.sam??na}</td><td style="text-align:center;font-weight:700;color:${t>0?'var(--jd-yellow)':'var(--mut)'}">${t>0?t:na}</td><td style="text-align:center">${stag(s.status)}</td></tr>`;}).join('');
+}
+
+function renderMapeamento(){
+  const na='<span style="color:var(--mut)">—</span>';
+  document.getElementById('map-tbody').innerHTML=lojas.filter(pass).map(l=>{
+    const s=segData.find(x=>x.mun===l.mun)||{};
+    const t=(s.varejo||0)+(s.cc||0)+(s.kam||0)+(s.sam||0);
+    return`<tr><td style="color:var(--mut);font-size:.71rem;">${l.reg}</td><td style="font-weight:600">${l.mun}</td><td style="text-align:right">${fmt(l.areaMapa)}</td><td style="text-align:center;font-weight:700;color:${rc(l.rep)}">${l.rep!=null?Math.round(l.rep*100)+'%':'—'}</td><td style="text-align:center">${s.varejo??na}</td><td style="text-align:center">${s.cc??na}</td><td style="text-align:center">${s.kam??na}</td><td style="text-align:center">${s.sam??na}</td><td style="text-align:center;font-weight:700;color:${t>0?'var(--jd-yellow)':'var(--mut)'}">${t>0?t:na}</td><td style="text-align:center">${stag(l.status)}</td></tr>`;}).join('');
+  const st={Varejo:0,'Conta Chave':0,KAM:0,SAM:0};
+  segData.forEach(s=>{if(s.varejo)st.Varejo+=s.varejo;if(s.cc)st['Conta Chave']+=s.cc;if(s.kam)st.KAM+=s.kam;if(s.sam)st.SAM+=s.sam;});
+  const tc=Object.values(st).reduce((a,b)=>a+b,0);
+  const sc={Varejo:'var(--ok)','Conta Chave':'var(--blue)',KAM:'var(--warn)',SAM:'var(--alert)'};
+  document.getElementById('seg-bars-map').innerHTML=Object.entries(st).map(([k,v])=>`<div class="br" style="margin-bottom:.8rem;"><div class="bn" style="width:95px">${k}</div><div class="bw"><div class="bf" style="width:${Math.round(v/tc*100)}%;background:${sc[k]}"></div></div><div class="bp" style="color:${sc[k]}">${Math.round(v/tc*100)}%</div><div style="font-size:.67rem;color:var(--mut);width:50px;text-align:right">${v.toLocaleString('pt-BR')}</div></div>`).join('');
+  document.getElementById('adr-bars-map').innerHTML=[...lojas].filter(l=>l.rep!=null).sort((a,b)=>b.rep-a.rep).map(l=>`<div class="br" style="margin-bottom:.55rem;"><div class="bn" style="font-size:.71rem;">${l.mun}</div><div class="bw" style="height:6px;"><div class="bf" style="width:${Math.round(l.rep*100)}%;background:${rc(l.rep)}"></div></div><div class="bp" style="color:${rc(l.rep)};font-size:.69rem;">${Math.round(l.rep*100)}%</div></div>`).join('');
+}
+
+function renderImpl(){
+  document.getElementById('impl-bars').innerHTML=lojas.filter(pass).sort((a,b)=>b.pct-a.pct).map(l=>{
+    const c=l.pct===100?'var(--ok)':l.pct>=60?'var(--warn)':'var(--alert)';
+    const faseColor = l.pct===100?'var(--ok)':l.pct>=60?'var(--warn)':'var(--alert)';
+    return`<div style="margin-bottom:.9rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <span style="font-size:.78rem;font-weight:600;color:var(--txt);width:130px;">${l.mun}</span>
+          <span style="font-size:.68rem;padding:1px 7px;border-radius:3px;background:rgba(255,255,255,.06);color:${faseColor};border:1px solid ${faseColor}33;">${l.fase}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.8rem;">
+          <span style="font-size:.68rem;color:var(--mut);">${l.deadline}</span>
+          <span style="font-size:.75rem;font-weight:700;color:${c};width:36px;text-align:right;">${l.pct}%</span>
+        </div>
+      </div>
+      <div style="background:var(--brd);border-radius:99px;height:8px;overflow:hidden;">
+        <div style="width:${l.pct}%;height:100%;background:${c};border-radius:99px;transition:width .5s;"></div>
+      </div>
+    </div>`;}).join('');
+}
+
+function populateLojaSelect(){
+  const sel=document.getElementById('loja-sel');
+  ['REG 1','REG 2','REG 3','REG 4'].forEach(reg=>{
+    const og=document.createElement('optgroup');og.label=reg;
+    lojas.filter(l=>l.reg===reg).forEach(l=>{
+      const o=document.createElement('option');o.value=l.mun;
+      o.textContent=`${l.mun} — ${l.rep!=null?Math.round(l.rep*100)+'% ADR':l.status}`;
+      og.appendChild(o);
+    });sel.appendChild(og);
+  });
+}
+
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  renderAll();
+  if(id==='evolucao') setTimeout(renderEvolucao, 100);
+}
+function setReg(r,el){aReg=r;document.querySelectorAll('.fbar .fb').forEach(b=>{if(['Todas','REG 1','REG 2','REG 3','REG 4'].includes(b.textContent))b.classList.remove('active');});el.classList.add('active');renderAll();}
+function setSt(s,el){aSt=s;document.querySelectorAll('.fbar .fb').forEach(b=>{if(['Todos','Finalizados','Pendentes'].includes(b.textContent))b.classList.remove('active');});el.classList.add('active');renderAll();}
+function setRV(r,el){aRV=r;document.querySelectorAll('#page-regional .fb').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderRegional();}
+
+function renderAll(){
+  renderGeral();renderCobertura();renderSeg();renderMapeamento();renderImpl();renderRegional();
+}
+
+
+// ═══════════════════════════════════════════════════
+// EVOLUÇÃO TEMPORAL
+// ═══════════════════════════════════════════════════
+// Snapshots: {periodo, mun, areaMapa, adrTotal, clientes}
+// Marco zero = Mar/2026 — 16/03/2026
+const snapshots = [
+  // ── Mar/2026 — marco zero (16/03/2026) ──
+  {periodo:"Mar/2026",mun:"REDE",         areaMapa:1492944,adrTotal:2735853,clientes:4784},
+  {periodo:"Mar/2026",mun:"Medianeira",   areaMapa:99416,  adrTotal:210003, clientes:645},
+  {periodo:"Mar/2026",mun:"Toledo",       areaMapa:63871,  adrTotal:100508, clientes:0},
+  {periodo:"Mar/2026",mun:"Marechal C.",  areaMapa:25954,  adrTotal:51572,  clientes:190},
+  {periodo:"Mar/2026",mun:"Palotina",     areaMapa:121676, adrTotal:198370, clientes:535},
+  {periodo:"Mar/2026",mun:"Cascavel",     areaMapa:209092, adrTotal:289611, clientes:702},
+  {periodo:"Mar/2026",mun:"Assis C.",     areaMapa:139382, adrTotal:188847, clientes:511},
+  {periodo:"Mar/2026",mun:"Ubiratã",      areaMapa:134739, adrTotal:140617, clientes:430},
+  {periodo:"Mar/2026",mun:"Campo Mourão", areaMapa:283818, adrTotal:386983, clientes:636},
+  {periodo:"Mar/2026",mun:"Goioerê",      areaMapa:123952, adrTotal:171348, clientes:377},
+  {periodo:"Mar/2026",mun:"Umuarama",     areaMapa:126995, adrTotal:213801, clientes:436},
+  {periodo:"Mar/2026",mun:"Cianorte",     areaMapa:36142,  adrTotal:130117, clientes:322},
+  {periodo:"Mar/2026",mun:"Dois Vizinhos",areaMapa:0,      adrTotal:144851, clientes:0},
+  {periodo:"Mar/2026",mun:"Realeza",      areaMapa:20662,  adrTotal:156766, clientes:0},
+  {periodo:"Mar/2026",mun:"Vitorino",     areaMapa:29089,  adrTotal:186241, clientes:0},
+  {periodo:"Mar/2026",mun:"Mangueirinha", areaMapa:35329,  adrTotal:102316, clientes:0},
+  {periodo:"Mar/2026",mun:"Palmas",       areaMapa:42827,  adrTotal:63902,  clientes:0},
+  // ── Adicione snapshots semanais/mensais abaixo ──
+];
+
+let evoFilter = "all";
+let adrChart = null, cliChart = null;
+
+function setSnapshotView(f, el) {
+  evoFilter = f;
+  document.querySelectorAll('#page-evolucao .fb').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderEvolucao();
+}
+
+function populateEvoLojaSelect() {
+  const sel = document.getElementById('evo-loja-sel');
+  if (!sel || sel.options.length > 1) return;
+  const munList = [...new Set(snapshots.map(s => s.mun))].filter(m => m !== 'REDE');
+  munList.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m; o.textContent = m; sel.appendChild(o);
+  });
+}
+
+function getFilteredSnapshots() {
+  const sel = document.getElementById('evo-loja-sel');
+  const munFilter = sel ? sel.value : 'REDE';
+  let data = snapshots.filter(s => s.mun === munFilter);
+  const periodos = [...new Set(data.map(s => s.periodo))];
+  if (evoFilter === 'last3') data = data.filter(s => periodos.slice(-3).includes(s.periodo));
+  if (evoFilter === 'last6') data = data.filter(s => periodos.slice(-6).includes(s.periodo));
+  return data;
+}
+
+function renderEvolucao() {
+  populateEvoLojaSelect();
+  const data = getFilteredSnapshots();
+  const periodos = [...new Set(data.map(s => s.periodo))];
+  const sel = document.getElementById('evo-loja-sel');
+  const munFilter = sel ? sel.value : 'REDE';
+
+  // KPIs
+  const first = data[0], last = data[data.length - 1];
+  const firstPct = first && first.adrTotal ? Math.round(first.areaMapa / first.adrTotal * 100) : null;
+  const lastPct  = last  && last.adrTotal  ? Math.round(last.areaMapa  / last.adrTotal  * 100) : null;
+  const delta = (firstPct != null && lastPct != null) ? lastPct - firstPct : null;
+  const kpiEl = document.getElementById('evo-kpis');
+  if (kpiEl) {
+    kpiEl.innerHTML = `
+      <div class="kc y"><div class="kl">Cobertura Inicial</div><div class="kv">${firstPct != null ? firstPct+'%' : '—'}</div><div class="ks">${first ? first.periodo : '—'}</div></div>
+      <div class="kc ${lastPct != null && lastPct >= 60 ? 'g' : 'r'}"><div class="kl">Cobertura Atual</div><div class="kv">${lastPct != null ? lastPct+'%' : '—'}</div><div class="ks">${last ? last.periodo : '—'}</div></div>
+      <div class="kc ${delta != null && delta >= 0 ? 'g' : 'r'}"><div class="kl">Evolução</div><div class="kv">${delta != null ? (delta >= 0 ? '+' : '') + delta + 'pp' : '—'}</div><div class="ks">variação no período</div></div>
+      <div class="kc b"><div class="kl">Clientes Seg. Atual</div><div class="kv">${last ? last.clientes.toLocaleString('pt-BR') : '—'}</div><div class="ks">${last ? last.periodo : '—'}</div></div>`;
+  }
+
+  // Charts via Chart.js
+  const adrPcts = periodos.map(p => {
+    const s = data.find(x => x.periodo === p);
+    return s && s.adrTotal ? Math.round(s.areaMapa / s.adrTotal * 100) : null;
+  });
+  const cliVals = periodos.map(p => {
+    const s = data.find(x => x.periodo === p);
+    return s ? s.clientes : null;
+  });
+
+  if (adrChart) { adrChart.destroy(); adrChart = null; }
+  if (cliChart) { cliChart.destroy(); cliChart = null; }
+
+  const canvasAdr = document.getElementById('evo-chart-adr');
+  const canvasCli = document.getElementById('evo-chart-cli');
+  if (!canvasAdr || !canvasCli || typeof Chart === 'undefined') return;
+
+  const gridColor = 'rgba(42,62,42,0.5)';
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#607860', font: { size: 11 } }, grid: { color: gridColor } },
+      y: { ticks: { color: '#607860', font: { size: 11 } }, grid: { color: gridColor } }
+    }
+  };
+
+  adrChart = new Chart(canvasAdr, {
+    type: 'line',
+    data: {
+      labels: periodos,
+      datasets: [
+        { label: 'Cobertura ADR %', data: adrPcts, borderColor: '#facc15', backgroundColor: 'rgba(250,204,21,0.1)', borderWidth: 2, pointBackgroundColor: '#facc15', pointRadius: 5, tension: 0.3, fill: true },
+        { label: 'Meta 60%', data: periodos.map(() => 60), borderColor: 'rgba(250,204,21,0.4)', borderWidth: 1, borderDash: [5,4], pointRadius: 0 },
+        { label: 'Meta 80%', data: periodos.map(() => 80), borderColor: 'rgba(74,222,128,0.5)', borderWidth: 1, borderDash: [5,4], pointRadius: 0 },
+      ]
+    },
+    options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, min: 0, max: 100, ticks: { ...baseOpts.scales.y.ticks, callback: v => v + '%' } } } }
+  });
+
+  cliChart = new Chart(canvasCli, {
+    type: 'bar',
+    data: {
+      labels: periodos,
+      datasets: [{ label: 'Clientes Segmentados', data: cliVals, backgroundColor: 'rgba(74,222,128,0.25)', borderColor: '#4ade80', borderWidth: 1.5, borderRadius: 4 }]
+    },
+    options: baseOpts
+  });
+
+  // Tabela
+  const tbody = document.getElementById('evo-tbody');
+  if (tbody) {
+    tbody.innerHTML = [...data].reverse().map(s => {
+      const pct = s.adrTotal ? Math.round(s.areaMapa / s.adrTotal * 100) : null;
+      const col = pct == null ? 'var(--blue)' : pct >= 80 ? 'var(--ok)' : pct >= 60 ? 'var(--warn)' : 'var(--alert)';
+      const vs60 = pct != null ? (pct >= 60 ? `<span style="color:var(--ok)">+${pct-60}pp</span>` : `<span style="color:var(--alert)">-${60-pct}pp</span>`) : '—';
+      const vs80 = pct != null ? (pct >= 80 ? `<span style="color:var(--ok)">+${pct-80}pp</span>` : `<span style="color:var(--alert)">-${80-pct}pp</span>`) : '—';
+      return `<tr>
+        <td style="font-weight:500;color:var(--jd-yellow)">${s.periodo}</td>
+        <td>${s.mun}</td>
+        <td style="text-align:center">${s.areaMapa > 0 ? s.areaMapa.toLocaleString('pt-BR') : '—'}</td>
+        <td style="text-align:center">${s.adrTotal ? s.adrTotal.toLocaleString('pt-BR') : '—'}</td>
+        <td style="text-align:center;font-weight:700;color:${col}">${pct != null ? pct+'%' : '—'}</td>
+        <td style="text-align:center">${s.clientes > 0 ? s.clientes.toLocaleString('pt-BR') : '—'}</td>
+        <td style="text-align:center">${vs60}</td>
+        <td style="text-align:center">${vs80}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+populateLojaSelect();
+renderAll();
+populateEvoLojaSelect();
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</body>
+</html>
